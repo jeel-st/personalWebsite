@@ -1,5 +1,5 @@
 <template>
-  <div class="relative mt-4 w-full max-w-2xl mx-auto aspect-video bg-[#faf8f5] rounded-xl overflow-hidden shadow-xl border border-gray-200">
+  <div class="relative mt-4 w-full max-w-2xl md:max-w-xl lg:max-w-xl mx-auto aspect-video dark:bg-[#6CA6CD] bg-[#9CAF88] rounded-xl overflow-hidden shadow-xl">
     
     <div class="absolute top-4 right-6 text-3xl font-bold text-gray-800 font-mono z-10">
       {{ score }}
@@ -8,7 +8,7 @@
     <div v-if="gameState === 'GAMEOVER'" class="absolute inset-0 bg-black/50 flex flex-col items-center justify-center z-20 transition-opacity">
       <h2 class="text-4xl font-bold text-white mb-4">Game Over</h2>
       <button 
-        @click="" 
+        @click="resetGame" 
         class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-lg transform transition hover:scale-105"
       >
         Nochmal spielen
@@ -180,6 +180,7 @@ let bridge: Bridge = {
 
 function update() {
   if (gameState.value === GameStates.GROWING) {
+    console.log(bridge.length)
     bridge.length += 4;
   }
   if (gameState.value === GameStates.FALLING) {
@@ -200,12 +201,12 @@ function update() {
     // Hat die Spitze der Brücke den Charakter erreicht?
     if (walkedDistance >= bridge.length) {
       const targetPlatform = platformList[1]!;
-      const charCenter = character.posX + character.size / 2;
+      const charCenter = character.posX + character.size;
       console.log(character.posX)
       // Steht der Charakter über der Zielplattform?
       if (charCenter >= targetPlatform.posCanvasX && charCenter <= targetPlatform.posCanvasX + targetPlatform.width) {
         score.value++;
-        gameState.value = GameStates.PANNING; // Jetzt Kamera final ausrichten
+        gameState.value = GameStates.PANNING;
       } else {
         gameState.value = GameStates.GAMEOVER;
       }
@@ -215,15 +216,12 @@ function update() {
   if (gameState.value === GameStates.PANNING) {
     const panSpeed = 4;
     
-    // Alles rutscht weiter nach links, bis die neue Plattform bei X=50 ankommt
     if (platformList[1]!.posCanvasX > POS_PLATFORM) {
       platformList.forEach(p => p.posCanvasX -= panSpeed);
       bridge.posX -= panSpeed;
-      character.posX -= panSpeed; // JETZT rutscht der Charakter physisch mit!
+      character.posX -= panSpeed;
     } else {
-      // ZIEL ERREICHT! Reset für die nächste Runde:
       
-      // A. Alte Plattform wegwerfen, neue hinten anfügen
       platformList.shift(); 
       platformList.push(generatePlatform(platformList[platformList.length - 1]!));
       
@@ -235,6 +233,8 @@ function update() {
       character.posX = platformList[0]!.posCanvasX + platformList[0]!.width - character.size - bridge.thickness;
       
       bridge.length = 0;
+      walkedDistance = 0;
+      console.log(bridge.length + "after refresh")
       bridge.angle = -Math.PI / 2;
       bridge.posX = platformList[0]!.posCanvasX + platformList[0]!.width - bridge.thickness;
       
@@ -259,6 +259,24 @@ function initGame() {
         angle: -Math.PI / 2,
         thickness: 6
     };
+}
+
+function resetGame() {
+  score.value = 0;
+  walkedDistance = 0;
+
+  platformList.length = 0; 
+  generateInitialPlatorms();
+
+  character.posX = platformList[0]!.posCanvasX + platformList[0]!.width - character.size - bridge.thickness;
+  character.posY = CANVAS_H - PLATFORM_H - character.size;
+
+  bridge.length = 0;
+  bridge.angle = -Math.PI / 2;
+  bridge.posX = platformList[0]!.posCanvasX + platformList[0]!.width - bridge.thickness;
+  bridge.posY = CANVAS_H - PLATFORM_H + bridge.thickness;
+
+  gameState.value = GameStates.WAITING;
 }
 
 onMounted(() => {

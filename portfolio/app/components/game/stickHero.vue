@@ -1,5 +1,5 @@
 <template>
-  <div class="relative mt-4 w-full max-w-2xl mx-auto aspect-video bg-[#faf8f5] rounded-xl overflow-hidden shadow-xl border border-gray-200">
+  <div class="relative mt-4 w-full max-w-xl mx-auto aspect-video bg-[#faf8f5] dark:bg-[#ffd166] rounded-xl overflow-hidden shadow-xl border border-gray-200">
     
     <div class="absolute top-4 right-6 text-3xl font-bold text-gray-800 font-mono z-10">
       {{ score }}
