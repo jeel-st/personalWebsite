@@ -5,7 +5,7 @@ export default {
         primaryLight: '#ede6d3',
         primaryDark: '#111827',
         secondaryLight: '#4b6b4e',
-        secondaryDark: '#f59e0b',
+        secondaryDark: '#3B82F6',
       },
       fontFamily: {
         sans: ['Oswald', 'sans-serif'],
