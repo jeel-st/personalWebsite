@@ -9,8 +9,8 @@
       <NuxtPage />
     </main>
 
-    <footer class="p-8 text-sm text-gray-500 dark:text-gray-400 flex flex-col justify-center items-center">
-      <ButtonsToggleButton />
+    <footer class="p-8 text-sm text-mutedText flex flex-col justify-center items-center">
+      <ButtonsThemeSwitcher />
       <p>© 2026 Joel Jeremy Starkov. All rights reserved.</p>
     </footer>
 

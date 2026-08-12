@@ -1,5 +1,7 @@
 <template>
-  <div class="relative mt-4 w-full max-w-2xl md:max-w-xl lg:max-w-xl mx-auto aspect-video dark:bg-[#6CA6CD] bg-[#9CAF88] rounded-xl overflow-hidden shadow-xl">
+  <div
+    class="relative mt-4 w-full max-w-2xl md:max-w-xl lg:max-w-xl mx-auto aspect-video rounded-xl overflow-hidden shadow-xl bg-[#9CAF88] theme-sunset:bg-[#f2a65a] theme-ocean:bg-[#6CA6CD] theme-slate:bg-[#8b96a5]"
+  >
     
     <div class="absolute top-4 right-6 text-3xl font-bold text-gray-800 font-mono z-10">
       {{ score }}
@@ -144,6 +146,9 @@ function generatePlatform(lastPlatform: Platform): Platform {
 // --- Brückenbaulogik ---
 let walkedDistance = 0;
 
+// --- Kamera-Pan Interpolation (Charakter läuft sichtbar zur Plattformkante) ---
+let panEdgeOffset = 0;
+
 function startBuilding() {
     if(gameState.value === GameStates.WAITING) {
         gameState.value = GameStates.GROWING;
@@ -206,6 +211,8 @@ function update() {
       // Steht der Charakter über der Zielplattform?
       if (charCenter >= targetPlatform.posCanvasX && charCenter <= targetPlatform.posCanvasX + targetPlatform.width) {
         score.value++;
+        // Zielposition (Offset relativ zur Plattform) für das Weiterlaufen zur Kante merken
+        panEdgeOffset = targetPlatform.width - character.size - bridge.thickness;
         gameState.value = GameStates.PANNING;
       } else {
         gameState.value = GameStates.GAMEOVER;
@@ -215,29 +222,45 @@ function update() {
   
   if (gameState.value === GameStates.PANNING) {
     const panSpeed = 4;
-    
-    if (platformList[1]!.posCanvasX > POS_PLATFORM) {
-      platformList.forEach(p => p.posCanvasX -= panSpeed);
-      bridge.posX -= panSpeed;
-      character.posX -= panSpeed;
-    } else {
-      
-      platformList.shift(); 
+    const walkToEdgeSpeed = 4;
+    const targetPlatform = platformList[1]!;
+
+    // Versatz des Charakters relativ zur Zielplattform VOR dem Kamera-Schwenk dieses Frames
+    const prevOffset = character.posX - targetPlatform.posCanvasX;
+
+    const remaining = targetPlatform.posCanvasX - POS_PLATFORM;
+    if (remaining > 0) {
+      const step = Math.min(panSpeed, remaining);
+      platformList.forEach(p => p.posCanvasX -= step);
+      bridge.posX -= step;
+    }
+
+    // Charakter läuft unabhängig vom Kamera-Schwenk mit eigenem Tempo zur Plattformkante
+    const offsetDiff = panEdgeOffset - prevOffset;
+    const offsetStep = Math.sign(offsetDiff) * Math.min(walkToEdgeSpeed, Math.abs(offsetDiff));
+    const newOffset = prevOffset + offsetStep;
+    character.posX = targetPlatform.posCanvasX + newOffset;
+
+    const panDone = targetPlatform.posCanvasX <= POS_PLATFORM;
+    const walkDone = Math.abs(offsetDiff) < 0.01;
+
+    if (panDone && walkDone) {
+
+      platformList.shift();
       platformList.push(generatePlatform(platformList[platformList.length - 1]!));
-      
+
       // B. Um Pixelfehler zu vermeiden, richten wir die Plattform exakt auf X=50 aus
       const offset = POS_PLATFORM - platformList[0]!.posCanvasX;
       platformList.forEach(p => p.posCanvasX += offset);
-      
+
       // C. Charakter und Brücke an die Kante der neuen Plattform setzen
       character.posX = platformList[0]!.posCanvasX + platformList[0]!.width - character.size - bridge.thickness;
-      
+
       bridge.length = 0;
       walkedDistance = 0;
-      console.log(bridge.length + "after refresh")
       bridge.angle = -Math.PI / 2;
       bridge.posX = platformList[0]!.posCanvasX + platformList[0]!.width - bridge.thickness;
-      
+
       // Bereit für den nächsten Klick!
       gameState.value = GameStates.WAITING;
     }

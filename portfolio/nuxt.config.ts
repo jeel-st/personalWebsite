@@ -2,10 +2,8 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['@nuxt/eslint', '@nuxtjs/tailwindcss','@nuxtjs/color-mode','@nuxtjs/google-fonts'],
-  colorMode: {
-    classSuffix: '' // Extrem wichtig: Sagt dem Modul, dass es die Klasse "dark" (für Tailwind) nutzen soll, nicht "dark-mode"
-  },
+  css: ['~/assets/css/main.css'],
+  modules: ['@nuxt/eslint', '@nuxtjs/tailwindcss', '@nuxtjs/google-fonts'],
   googleFonts: {
     families: {
       'Oswald': [400, 700],
