@@ -10,12 +10,13 @@
         <div>
             <h1 class="text-5xl md:text-6xl lg:text-8xl font-bold mb-4 text-center text-secondary">COMPUTER SCIENCE STUDENT</h1>
         </div>
+        
+
+        <ProjectsFeaturedWork />
         <div class="mt-12 lg:mt-4 md:mt-4">
             <p>Currently working at: Mercedes-Benz AG</p>
         </div>
     </div>
 </template>
 <script setup>
-import ProjectGrid from '~/components/projects/ProjectGrid.vue';
-
 </script>

@@ -40,18 +40,22 @@ onBeforeUnmount(() => document.removeEventListener('click', handleClickOutside))
 
     <div
       v-if="isOpen"
-      class="absolute bottom-full right-0 mb-3 flex gap-2 p-3 rounded-2xl bg-surface shadow-lg"
+      class="absolute bottom-full right-0 mb-3 flex gap-3 p-3 rounded-2xl bg-surface shadow-lg"
     >
       <button
         v-for="t in themes"
         :key="t.id"
-        class="size-8 rounded-full transition-transform duration-200 hover:scale-110"
-        :class="theme === t.id ? 'ring-2 ring-offset-2 ring-secondary ring-offset-surface' : ''"
-        :style="{ backgroundColor: t.swatch }"
+        class="flex items-center justify-center size-11 -m-1 rounded-full"
         :aria-label="t.label"
         :title="t.label"
         @click="selectTheme(t.id)"
-      />
+      >
+        <span
+          class="block size-8 rounded-full transition-transform duration-200"
+          :class="theme === t.id ? 'ring-2 ring-offset-2 ring-secondary ring-offset-surface scale-110' : ''"
+          :style="{ backgroundColor: t.swatch }"
+        />
+      </button>
     </div>
   </div>
 </template>

@@ -1,6 +1,7 @@
 <template>
   <div>
-    
+    <CustomCursor />
+
     <header>
       <Info />
     </header>

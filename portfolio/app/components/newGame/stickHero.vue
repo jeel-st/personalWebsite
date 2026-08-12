@@ -1,8 +1,16 @@
 <template>
-  <div
-    class="relative mt-4 w-full max-w-2xl md:max-w-xl lg:max-w-xl mx-auto aspect-video rounded-xl overflow-hidden shadow-xl bg-[#9CAF88] theme-sunset:bg-[#f2a65a] theme-ocean:bg-[#6CA6CD] theme-slate:bg-[#8b96a5]"
-  >
-    
+  <div class="relative mt-4 w-full max-w-2xl md:max-w-xl lg:max-w-xl mx-auto">
+    <!-- Dezenter Farbschein hinter dem Spiel, deutlich zurückhaltender als bei den Projekten,
+         da der Spiel-Hintergrund selbst schon kräftig eingefärbt ist -->
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none -z-10">
+      <div
+        class="w-48 h-48 md:w-72 md:h-72 rounded-full blur-3xl opacity-10"
+        style="background: var(--color-accent)"
+      />
+    </div>
+
+    <div class="relative aspect-video rounded-xl overflow-hidden shadow-xl bg-[#9CAF88] theme-sunset:bg-[#f2a65a] theme-ocean:bg-[#6CA6CD] theme-slate:bg-[#8b96a5]">
+
     <div class="absolute top-4 right-6 text-3xl font-bold text-gray-800 font-mono z-10">
       {{ score }}
     </div>
@@ -33,6 +41,7 @@
       @mouseleave="stopBuilding"
     ></canvas>
 
+    </div>
   </div>
 </template>
 <script setup lang="ts">
