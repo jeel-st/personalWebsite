@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <!-- overflow-x-clip: Elemente, die seitlich überstehen (z. B. die Karussell-Karten), werden am
+       Bildschirmrand abgeschnitten, statt die Seite zu verbreitern. Sonst zoomen Mobile-Browser die
+       ganze Seite heraus, besonders beim Drehen. "clip" statt "hidden", damit die sticky Navbar funktioniert. -->
+  <div class="overflow-x-clip">
     <CustomCursor />
 
     <LayoutNavbar />

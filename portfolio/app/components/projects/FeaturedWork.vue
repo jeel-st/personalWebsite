@@ -58,6 +58,15 @@ function cardClass(index: number) {
     : 'shadow-xl';
 }
 
+// Cursor-Text beschreibt, was ein Klick auf die Karte tatsächlich tut.
+// Die mittlere Karte bekommt (noch) keinen Text, bis es Projekt-Detailseiten gibt.
+function cursorLabel(index: number) {
+  const offset = circularOffset(index);
+  if (offset === -1) return '← Prev';
+  if (offset === 1) return 'Next →';
+  return undefined;
+}
+
 // Swipe-Steuerung
 let touchStartX = 0;
 
@@ -94,10 +103,10 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
 
     <div class="text-center mb-14 md:mb-20">
       <p class="text-xs md:text-sm font-semibold tracking-[0.3em] text-secondary uppercase mb-3">
-        Ausgewählte Arbeiten
+        Selected Works
       </p>
       <h2 class="font-serif text-5xl md:text-7xl lg:text-8xl font-bold text-bodyText">
-        PROJEKTE
+        PROJECTS
       </h2>
     </div>
 
@@ -119,7 +128,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
       <div
         v-for="(project, index) in projects"
         :key="project.id"
-        data-cursor="view"
+        data-cursor
+        :data-cursor-label="cursorLabel(index)"
         class="group absolute w-52 h-52 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-[24rem] lg:h-[24rem] rounded-3xl overflow-hidden cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
         :class="cardClass(index)"
         :style="cardStyle(index)"

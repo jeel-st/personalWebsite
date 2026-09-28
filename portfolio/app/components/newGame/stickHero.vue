@@ -26,7 +26,7 @@
     </div>
 
     <div v-if="gameState === 'WAITING' && score === 0" class="absolute top-1/4 w-full text-center text-gray-500 font-medium z-10 animate-pulse pointer-events-none">
-      Halte gedrückt, um die Brücke zu bauen
+      Hold down to build the bridge
     </div>
 
     <canvas
@@ -227,6 +227,39 @@ function roundedRectPath(c: CanvasRenderingContext2D, x: number, y: number, w: n
   c.closePath();
 }
 
+// Sonnenuntergang: Himmelsverlauf + tiefstehende Sonne. Die Hügel werden danach gezeichnet
+// und verdecken die Sonne unten, dadurch wirkt es, als ginge sie hinter ihnen unter.
+function drawSunset(c: CanvasRenderingContext2D) {
+  const sky = c.createLinearGradient(0, 0, 0, PLATFORM_TOP);
+  sky.addColorStop(0, 'rgba(110, 50, 110, 0.35)'); // oben: dämmriges Violett
+  sky.addColorStop(0.55, 'rgba(255, 120, 90, 0)'); // Mitte: Grundfarbe des Hintergrunds
+  sky.addColorStop(1, 'rgba(255, 215, 130, 0.5)'); // Horizont: warmes Gelb
+  c.fillStyle = sky;
+  c.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+  // Die Sonne ist "unendlich weit weg" und bewegt sich deshalb nicht mit (kein Parallax)
+  const sunX = 560;
+  const sunY = 285;
+  const sunR = 70;
+
+  const glowR = sunR * 2.6 + Math.sin(elapsed * 1.5) * 6; // leichtes Pulsieren des Scheins
+  const glow = c.createRadialGradient(sunX, sunY, sunR * 0.8, sunX, sunY, glowR);
+  glow.addColorStop(0, 'rgba(255, 230, 150, 0.55)');
+  glow.addColorStop(1, 'rgba(255, 230, 150, 0)');
+  c.fillStyle = glow;
+  c.beginPath();
+  c.arc(sunX, sunY, glowR, 0, Math.PI * 2);
+  c.fill();
+
+  const sun = c.createLinearGradient(0, sunY - sunR, 0, sunY + sunR);
+  sun.addColorStop(0, '#fff1b8');
+  sun.addColorStop(1, '#ff9a5a');
+  c.fillStyle = sun;
+  c.beginPath();
+  c.arc(sunX, sunY, sunR, 0, Math.PI * 2);
+  c.fill();
+}
+
 function drawSkyDecor(c: CanvasRenderingContext2D) {
   if (currentTheme.value.isDark) {
     // Dunkle Themes: funkelnde Sterne
@@ -239,8 +272,11 @@ function drawSkyDecor(c: CanvasRenderingContext2D) {
     return;
   }
 
+  const isSunset = currentTheme.value.id === 'sunset';
+  if (isSunset) drawSunset(c);
+
   // Helle Themes: Wolken, die langsam treiben und sich kaum mitbewegen (weit weg)
-  c.fillStyle = 'rgba(255, 255, 255, 0.55)';
+  c.fillStyle = isSunset ? 'rgba(255, 214, 214, 0.55)' : 'rgba(255, 255, 255, 0.55)';
   c.beginPath();
   clouds.forEach((cloud) => {
     const x = mod(cloud.x - worldScroll * 0.1 - elapsed * 6, CANVAS_W + 200) - 100;
@@ -331,8 +367,11 @@ function draw() {
 
     // Hintergrund: je weiter hinten, desto langsamer bewegt er sich mit (Parallax)
     drawSkyDecor(c);
-    drawHills(c, 0.15, 0, 265, 40, 15, 'rgba(0, 0, 0, 0.07)');
-    drawHills(c, 0.35, 500, 320, 30, 12, 'rgba(0, 0, 0, 0.12)');
+    // Normalerweise halbtransparent, damit die Hügel zu jeder Theme-Farbe passen.
+    // Bei Sunset deckend, sonst scheint die Sonne durch die Hügel hindurch.
+    const isSunset = currentTheme.value.id === 'sunset';
+    drawHills(c, 0.15, 0, 265, 40, 15, isSunset ? '#dc8f5c' : 'rgba(0, 0, 0, 0.07)');
+    drawHills(c, 0.35, 500, 320, 30, 12, isSunset ? '#c0764d' : 'rgba(0, 0, 0, 0.12)');
 
     platformList.forEach((platform, index) => {
         c.fillStyle = PLATFORM_COLOR;

@@ -2,10 +2,10 @@
   <div class="max-w-6xl mx-auto px-4 py-12 md:py-20">
     <div class="text-center mb-14 md:mb-20">
       <p class="text-xs md:text-sm font-semibold tracking-[0.3em] text-secondary uppercase mb-3">
-        Alle Arbeiten
+        All works
       </p>
       <h1 class="font-serif text-5xl md:text-7xl font-bold text-bodyText">
-        PROJEKTE
+        PROJECTS
       </h1>
     </div>
 
@@ -13,7 +13,7 @@
       <div
         v-for="project in projects"
         :key="project.id"
-        data-cursor="view"
+        data-cursor
         class="group relative aspect-square rounded-3xl overflow-hidden shadow-xl cursor-pointer transition-transform duration-500 hover:-translate-y-2"
       >
         <img :src="project.image" :alt="project.title" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">

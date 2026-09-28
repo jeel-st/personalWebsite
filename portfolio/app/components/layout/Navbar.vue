@@ -6,7 +6,7 @@ const isOpen = ref(false);
 
 const links = [
   { to: '/', label: 'Home' },
-  { to: '/projects', label: 'Projekte' },
+  { to: '/projects', label: 'Projects' },
   { to: '/about', label: 'About' },
   { to: '/contact', label: 'Contact' },
 ];
