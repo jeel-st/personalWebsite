@@ -4,6 +4,7 @@
        ganze Seite heraus, besonders beim Drehen. "clip" statt "hidden", damit die sticky Navbar funktioniert. -->
   <div class="overflow-x-clip">
     <CustomCursor />
+    <ProjectsProjectModal />
 
     <LayoutNavbar />
 

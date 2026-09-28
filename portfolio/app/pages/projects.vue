@@ -14,7 +14,9 @@
         v-for="project in projects"
         :key="project.id"
         data-cursor
+        data-cursor-label="Open"
         class="group relative aspect-square rounded-3xl overflow-hidden shadow-xl cursor-pointer transition-transform duration-500 hover:-translate-y-2"
+        @click="open(project.slug)"
       >
         <img :src="project.image" :alt="project.title" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
         <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/0 to-transparent" />
@@ -29,6 +31,8 @@
 </template>
 
 <script setup lang="ts">
+const { open } = useProjectModal();
+
 useSeoMeta({
   title: 'Projekte — Joel Starkov',
   description: 'Eine Übersicht aller Projekte von Joel Starkov.',

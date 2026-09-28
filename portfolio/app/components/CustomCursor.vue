@@ -33,9 +33,12 @@ function onMouseMove(event: MouseEvent) {
 }
 
 // Nach einem Klick kann sich unter dem stillstehenden Cursor etwas ändern
-// (z. B. rückt eine Karussell-Karte in die Mitte), daher neu auswerten, sobald Vue gerendert hat
+// (z. B. rückt eine Karussell-Karte in die Mitte, oder ein Fenster geht auf). Daher einmal direkt
+// nach dem Rendern neu auswerten und ein zweites Mal, wenn die Animationen durch sind.
 function onClick() {
-  requestAnimationFrame(() => updateFor(document.elementFromPoint(x.value, y.value)));
+  const refresh = () => updateFor(document.elementFromPoint(x.value, y.value));
+  requestAnimationFrame(refresh);
+  setTimeout(refresh, 500);
 }
 
 function onWindowLeave() {

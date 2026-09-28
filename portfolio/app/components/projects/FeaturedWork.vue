@@ -19,6 +19,14 @@ function goTo(index: number) {
   activeIndex.value = index;
 }
 
+const { open } = useProjectModal();
+
+// Klick auf die mittlere Karte öffnet das Projekt, Klick auf eine Seitenkarte holt sie in die Mitte
+function onCardClick(index: number) {
+  if (index === activeIndex.value) open(projects[index]!.slug);
+  else goTo(index);
+}
+
 // Kürzeste Distanz einer Karte zur aktiven Mitte, im Kreis gedacht
 // (Karte 4 ist also "einen Schritt links" von Karte 1, nicht drei Schritte rechts).
 function circularOffset(index: number) {
@@ -59,11 +67,11 @@ function cardClass(index: number) {
 }
 
 // Cursor-Text beschreibt, was ein Klick auf die Karte tatsächlich tut.
-// Die mittlere Karte bekommt (noch) keinen Text, bis es Projekt-Detailseiten gibt.
 function cursorLabel(index: number) {
   const offset = circularOffset(index);
   if (offset === -1) return '← Prev';
   if (offset === 1) return 'Next →';
+  if (offset === 0) return 'Open';
   return undefined;
 }
 
@@ -133,7 +141,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
         class="group absolute w-52 h-52 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-[24rem] lg:h-[24rem] rounded-3xl overflow-hidden cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
         :class="cardClass(index)"
         :style="cardStyle(index)"
-        @click="goTo(index)"
+        @click="onCardClick(index)"
         @mouseenter="hoveredIndex = index"
         @mouseleave="hoveredIndex = null"
       >
