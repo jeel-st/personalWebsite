@@ -2,6 +2,8 @@
   <div>
     <CustomCursor />
 
+    <LayoutNavbar />
+
     <header>
       <Info />
     </header>
