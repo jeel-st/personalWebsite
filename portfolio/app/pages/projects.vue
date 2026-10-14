@@ -12,7 +12,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
       <div
         v-for="project in projects"
-        :key="project.id"
+        :key="project.slug"
         data-cursor
         data-cursor-label="Open"
         class="group relative aspect-square rounded-3xl overflow-hidden shadow-xl cursor-pointer transition-transform duration-500 hover:-translate-y-2"

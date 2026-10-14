@@ -19,7 +19,7 @@ function goTo(index: number) {
   activeIndex.value = index;
 }
 
-const { open } = useProjectModal();
+const { open, currentProject } = useProjectModal();
 
 // Klick auf die mittlere Karte öffnet das Projekt, Klick auf eine Seitenkarte holt sie in die Mitte
 function onCardClick(index: number) {
@@ -91,6 +91,8 @@ function onTouchEnd(event: TouchEvent) {
 
 // Pfeiltasten-Steuerung
 function onKeydown(event: KeyboardEvent) {
+  // Ist ein Projekt-Fenster offen, gehören die Pfeiltasten dem Fenster, nicht dem Karussell im Hintergrund
+  if (currentProject.value) return;
   if (event.key === 'ArrowLeft') prev();
   if (event.key === 'ArrowRight') next();
 }
@@ -135,7 +137,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
 
       <div
         v-for="(project, index) in projects"
-        :key="project.id"
+        :key="project.slug"
         data-cursor
         :data-cursor-label="cursorLabel(index)"
         class="group absolute w-52 h-52 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-[24rem] lg:h-[24rem] rounded-3xl overflow-hidden cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
@@ -172,7 +174,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
       <div class="flex">
         <button
           v-for="(project, index) in projects"
-          :key="project.id"
+          :key="project.slug"
           class="flex items-center justify-center size-9 rounded-full transition-colors duration-200 hover:bg-surface"
           :aria-label="`Zu ${project.title}`"
           @click="goTo(index)"
