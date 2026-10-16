@@ -34,7 +34,7 @@ Die beiden Spieler übernehmen unterschiedliche Rollen, **Mechaniker** und **Min
 
 > Jede Mission verlangt echte Teamarbeit.
 
-## Trailer
+## Gameplay-Video
 
 <iframe src="https://www.youtube-nocookie.com/embed/PVTPaY90tQo" title="Gaia Protocol Trailer" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 

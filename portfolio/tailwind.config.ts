@@ -1,14 +1,24 @@
 import plugin from 'tailwindcss/plugin';
 
+// Theme-Farbe aus einer CSS-Variable. Als Funktion definiert, damit auch Klassen mit Deckkraft
+// (z. B. bg-surface/60 oder border-secondary/20) funktionieren: Aus einer reinen var(...)-Farbe
+// kann Tailwind sonst keine halbtransparente Variante erzeugen und lässt die Klasse stillschweigend weg.
+function themeColor(variable: string) {
+  return ({ opacityValue }: { opacityValue?: string }) =>
+    opacityValue === undefined
+      ? `var(${variable})`
+      : `color-mix(in srgb, var(${variable}) calc(${opacityValue} * 100%), transparent)`;
+}
+
 export default {
   theme: {
     extend: {
       colors: {
-        primary: 'var(--color-bg)',
-        surface: 'var(--color-surface)',
-        secondary: 'var(--color-accent)',
-        bodyText: 'var(--color-text)',
-        mutedText: 'var(--color-text-muted)',
+        primary: themeColor('--color-bg'),
+        surface: themeColor('--color-surface'),
+        secondary: themeColor('--color-accent'),
+        bodyText: themeColor('--color-text'),
+        mutedText: themeColor('--color-text-muted'),
       },
       fontFamily: {
         sans: ['Oswald', 'sans-serif'],

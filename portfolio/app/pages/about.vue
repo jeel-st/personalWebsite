@@ -25,7 +25,7 @@
       <h2 class="text-xs font-semibold tracking-[0.3em] text-secondary uppercase mb-8">
         {{ section.title }}
       </h2>
-      <ol class="relative border-l border-secondary/20 pl-6 space-y-10">
+      <ol class="relative border-l border-secondary/40 pl-6 space-y-10">
         <li v-for="station in section.stations" :key="station.org">
           <div class="relative mb-1">
             <!-- Punkt exakt auf der Linie: 24px Einrückung (pl-6) + halbe Linienbreite, vertikal mittig zur Zeile -->

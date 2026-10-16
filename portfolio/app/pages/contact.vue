@@ -1,12 +1,11 @@
 <template>
   <div class="relative max-w-3xl mx-auto px-4 py-16 md:py-24">
-    <!-- Weicher Farbschein im Hintergrund, wie bei den anderen Abschnitten -->
-    <div class="absolute inset-0 flex items-start justify-center pointer-events-none -z-10">
-      <div
-        class="mt-24 w-72 h-72 md:w-[30rem] md:h-[30rem] rounded-full blur-3xl opacity-15"
-        style="background: var(--color-accent)"
-      />
-    </div>
+    <!-- Weicher Farbschein hinter der Überschrift: ein radialer Verlauf, der sanft ins Transparente
+         ausläuft (statt einer weichgezeichneten Scheibe, die sichtbare Kanten und einen Grauschleier erzeugt) -->
+    <div
+      class="absolute inset-x-0 top-0 h-[36rem] pointer-events-none -z-10"
+      style="background: radial-gradient(ellipse 55% 55% at 50% 40%, color-mix(in srgb, var(--color-accent) 22%, transparent), transparent 70%)"
+    />
 
     <div class="text-center mb-12 md:mb-16">
       <p class="text-xs md:text-sm font-semibold tracking-[0.3em] text-secondary uppercase mb-3">
