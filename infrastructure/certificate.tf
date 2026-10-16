@@ -23,8 +23,10 @@ resource "tls_cert_request" "origin" {
 }
 
 resource "cloudflare_origin_ca_certificate" "origin" {
-  csr                = tls_cert_request.origin.cert_request_pem
-  hostnames          = [var.domain, "*.${var.domain}"]
+  csr = tls_cert_request.origin.cert_request_pem
+  # Reihenfolge so, wie Cloudflare sie zurückgibt (alphabetisch). Sonst sieht Terraform bei jedem Lauf
+  # eine "Änderung", stellt das Zertifikat neu aus und baut dadurch auch den Server neu auf.
+  hostnames          = ["*.${var.domain}", var.domain]
   request_type       = "origin-ecc"
   requested_validity = 5475 # 15 Jahre
 }

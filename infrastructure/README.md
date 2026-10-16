@@ -11,7 +11,8 @@ Besucher --HTTPS--> Cloudflare --HTTPS (Origin-Zertifikat)--> Hetzner-Server: Ca
 1. **Hetzner:** Projekt anlegen → *Sicherheit* → *API-Tokens* → Token mit **Lesen & Schreiben** erstellen
 2. **Cloudflare:** *Mein Profil* → *API-Tokens* → *Token erstellen* → *Benutzerdefiniertes Token* mit diesen Berechtigungen:
    - Zone → **DNS** → Bearbeiten
-   - Zone → **SSL und Zertifikate** → Bearbeiten
+   - Zone → **SSL und Zertifikate** → Bearbeiten (für das Origin-Zertifikat)
+   - Zone → **Zoneneinstellungen** (*Zone Settings*) → Bearbeiten (für SSL-Modus und HTTPS-Umleitung)
    - Zonenressourcen: nur `joel-starkov.com`
 3. `terraform.tfvars.example` kopieren, in `terraform.tfvars` umbenennen und beide Tokens eintragen
 4. Einmal initialisieren:

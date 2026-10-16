@@ -6,5 +6,5 @@ cloudflare_api_token = "HIER_CLOUDFLARE_TOKEN_EINTRAGEN"
 
 # Optional, die Standardwerte stehen in variables.tf:
 # location        = "fsn1"
-# server_type     = "cx22"
+# server_type     = "cx23"
 # ssh_allowed_ips = ["DEINE.IP.ADRESSE/32"]

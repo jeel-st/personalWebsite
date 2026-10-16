@@ -7,7 +7,7 @@ variable "hcloud_token" {
 }
 
 variable "cloudflare_api_token" {
-  description = "Cloudflare API-Token mit den Rechten Zone/DNS/Bearbeiten und Zone/SSL und Zertifikate/Bearbeiten"
+  description = "Cloudflare API-Token mit den Rechten Zone: DNS, SSL und Zertifikate, Zoneneinstellungen (jeweils Bearbeiten)"
   type        = string
   sensitive   = true
 }
@@ -37,9 +37,9 @@ variable "location" {
 }
 
 variable "server_type" {
-  description = "Hetzner-Servertyp. Verfügbare Typen: https://www.hetzner.com/cloud"
+  description = "Hetzner-Servertyp (cx23: 2 vCPU, 4 GB RAM). Verfügbare Typen: https://www.hetzner.com/cloud"
   type        = string
-  default     = "cx22"
+  default     = "cx23"
 }
 
 variable "image" {

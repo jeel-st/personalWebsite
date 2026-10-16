@@ -85,6 +85,9 @@ write_files:
       APP_DIR="$REPO_DIR/${app_dir}"
       as_app() { sudo -u portfolio -H "$@"; }
 
+      # Home-Verzeichnis des App-Benutzers anlegen (wird für System-Benutzer nicht automatisch erstellt)
+      install -d -o portfolio -g portfolio /opt/portfolio
+
       echo "==> Code holen ($BRANCH)"
       if [ -d "$REPO_DIR/.git" ]; then
         as_app git -C "$REPO_DIR" fetch --depth 1 origin "$BRANCH"
@@ -110,6 +113,9 @@ runcmd:
   # Node.js 22
   - curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
   - apt-get install -y nodejs
+  # Gleiche npm-Hauptversion wie in der Entwicklung: Die Lock-Datei wird mit npm 11 geschrieben,
+  # das mit Node 22 mitgelieferte npm 10 hält sie für unvollständig und "npm ci" bricht ab.
+  - npm install -g npm@11
 
   # Caddy aus dem offiziellen Repository
   - curl -1sLf https://dl.cloudsmith.io/public/caddy/stable/gpg.key | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg

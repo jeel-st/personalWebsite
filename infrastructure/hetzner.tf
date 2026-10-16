@@ -71,4 +71,11 @@ resource "hcloud_server" "web" {
   labels = {
     project = "portfolio"
   }
+
+  # Cloud-init läuft nur beim allerersten Start. Eine Änderung daran soll deshalb nicht dazu führen,
+  # dass Terraform den laufenden Server ungefragt löscht und neu aufbaut. Neue Cloud-init-Einstellungen
+  # bewusst übernehmen mit: terraform apply -replace='hcloud_server.web[0]'
+  lifecycle {
+    ignore_changes = [user_data]
+  }
 }
