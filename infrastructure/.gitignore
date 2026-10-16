@@ -1,0 +1,13 @@
+# Terraform-Arbeitsordner (heruntergeladene Provider)
+.terraform/
+
+# State: enthält u. a. den privaten Schlüssel des Zertifikats, gehört NIE ins Repository
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+
+# Zugangsdaten
+terraform.tfvars
+*.auto.tfvars

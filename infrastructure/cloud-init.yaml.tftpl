@@ -1,0 +1,127 @@
+#cloud-config
+# Richtet den Server beim ersten Start komplett ein:
+#   1. Node.js und Caddy (Webserver) installieren
+#   2. Website von GitHub holen, bauen und als Dienst starten (über /usr/local/bin/deploy-portfolio)
+#   3. Caddy liefert die Seite per HTTPS mit dem Cloudflare-Origin-Zertifikat aus
+# Fortschritt und Fehler auf dem Server ansehen: sudo tail -f /var/log/cloud-init-output.log
+
+package_update: true
+package_upgrade: true
+packages:
+  - git
+  - curl
+  - gnupg
+  - debian-keyring
+  - debian-archive-keyring
+  - apt-transport-https
+
+users:
+  - default
+  # Die Website läuft unter einem eigenen Benutzer ohne Login und ohne Root-Rechte
+  - name: portfolio
+    system: true
+    homedir: /opt/portfolio
+    shell: /usr/sbin/nologin
+
+write_files:
+  # --- Zertifikat für die Verbindung Cloudflare -> Server ---
+  - path: /etc/portfolio/certs/origin.pem
+    permissions: "0644"
+    content: |
+      ${indent(6, origin_certificate)}
+  - path: /etc/portfolio/certs/origin-key.pem
+    permissions: "0600"
+    content: |
+      ${indent(6, origin_private_key)}
+
+  # --- Webserver ---
+  - path: /etc/portfolio/Caddyfile
+    permissions: "0644"
+    content: |
+      ${domain}, www.${domain} {
+        tls /etc/portfolio/certs/origin.pem /etc/portfolio/certs/origin-key.pem
+
+        # www.${domain} leitet dauerhaft auf ${domain} um, damit es nur eine Hauptadresse gibt
+        @www host www.${domain}
+        redir @www https://${domain}{uri} permanent
+
+        encode zstd gzip
+        reverse_proxy 127.0.0.1:3000
+      }
+
+  # --- Die Nuxt-App als Dienst, der bei Absturz oder Neustart automatisch wieder hochfährt ---
+  - path: /etc/systemd/system/portfolio.service
+    permissions: "0644"
+    content: |
+      [Unit]
+      Description=Portfolio Website (Nuxt)
+      After=network-online.target
+      Wants=network-online.target
+
+      [Service]
+      User=portfolio
+      WorkingDirectory=/opt/portfolio/repo/${app_dir}
+      Environment=NODE_ENV=production
+      Environment=HOST=127.0.0.1
+      Environment=PORT=3000
+      ExecStart=/usr/bin/node .output/server/index.mjs
+      Restart=always
+      RestartSec=3
+
+      [Install]
+      WantedBy=multi-user.target
+
+  # --- Deploy-Skript: neueste Version holen, bauen, neu starten ---
+  # Läuft beim ersten Start automatisch. Später manuell per SSH oder über eine CI/CD-Pipeline aufrufbar.
+  - path: /usr/local/bin/deploy-portfolio
+    permissions: "0755"
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+
+      REPO_URL="${repo_url}"
+      BRANCH="${repo_branch}"
+      REPO_DIR=/opt/portfolio/repo
+      APP_DIR="$REPO_DIR/${app_dir}"
+      as_app() { sudo -u portfolio -H "$@"; }
+
+      echo "==> Code holen ($BRANCH)"
+      if [ -d "$REPO_DIR/.git" ]; then
+        as_app git -C "$REPO_DIR" fetch --depth 1 origin "$BRANCH"
+        as_app git -C "$REPO_DIR" reset --hard FETCH_HEAD
+      else
+        as_app git clone --depth 1 --branch "$BRANCH" "$REPO_URL" "$REPO_DIR"
+      fi
+
+      echo "==> Abhängigkeiten installieren und bauen"
+      cd "$APP_DIR"
+      as_app npm ci --no-audit --no-fund
+      as_app npm run build
+
+      echo "==> Neu starten"
+      systemctl restart portfolio
+      echo "==> Fertig: $(as_app git -C "$REPO_DIR" log -1 --format='%h %s')"
+
+runcmd:
+  # Auslagerungsspeicher, damit der Build auch auf kleinen Servern nicht am Arbeitsspeicher scheitert
+  - fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile
+  - echo '/swapfile none swap sw 0 0' >> /etc/fstab
+
+  # Node.js 22
+  - curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+  - apt-get install -y nodejs
+
+  # Caddy aus dem offiziellen Repository
+  - curl -1sLf https://dl.cloudsmith.io/public/caddy/stable/gpg.key | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+  - curl -1sLf https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt -o /etc/apt/sources.list.d/caddy-stable.list
+  - apt-get update
+  - apt-get install -y caddy
+  - chown -R root:caddy /etc/portfolio/certs
+  - chmod 0640 /etc/portfolio/certs/origin-key.pem
+  - cp /etc/portfolio/Caddyfile /etc/caddy/Caddyfile
+
+  # Website bauen und starten
+  - systemctl daemon-reload
+  - /usr/local/bin/deploy-portfolio
+  - systemctl enable --now portfolio
+  - systemctl restart caddy

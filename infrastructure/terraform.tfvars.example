@@ -1,0 +1,10 @@
+# Vorlage: diese Datei kopieren und in "terraform.tfvars" umbenennen, dann die Tokens eintragen.
+# terraform.tfvars ist per .gitignore ausgeschlossen und landet nie im Repository.
+
+hcloud_token         = "HIER_HETZNER_TOKEN_EINTRAGEN"
+cloudflare_api_token = "HIER_CLOUDFLARE_TOKEN_EINTRAGEN"
+
+# Optional, die Standardwerte stehen in variables.tf:
+# location        = "fsn1"
+# server_type     = "cx22"
+# ssh_allowed_ips = ["DEINE.IP.ADRESSE/32"]
