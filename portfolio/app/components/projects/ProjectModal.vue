@@ -276,6 +276,22 @@ onBeforeUnmount(() => {
   background: var(--color-surface);
 }
 
+/* Code-Blöcke: lange Zeilen scrollen innerhalb des Blocks, statt das Fenster zu sprengen */
+.project-content :deep(pre) {
+  overflow-x: auto;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  background: var(--color-surface);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.project-content :deep(pre code) {
+  padding: 0;
+  background: none;
+  font-size: inherit;
+}
+
 .project-content :deep(blockquote) {
   border-left: 3px solid var(--color-accent);
   padding-left: 1rem;

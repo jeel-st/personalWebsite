@@ -7,7 +7,7 @@ year: 2025–2026
 order: 2
 ---
 
-Der **Stream Scheduler** (intern *Dendree*) ist eine Webplattform rund um Twitch-Streams, die sich an zwei Zielgruppen richtet:
+Der Stream Scheduler ist eine Webplattform rund um Twitch-Streams, die sich an zwei Zielgruppen richtet:
 
 - **Zuschauer** sehen, wann ihre Lieblings-Streamer live gehen, bekommen persönliche Empfehlungen und können Creatorn folgen.
 - **Creator** planen ihre Streams, Gäste und Events an einem Ort und teilen sie mit ihrer Community.
@@ -58,3 +58,7 @@ Entwickelt zusammen mit [Lars Gerigk](https://github.com/byGamsa). Der Quellcode
   ![Creator-Profil](/stream-scheduler/profil.png)
   :::
 -->
+  ::: gallery
+  ![Dashboard](/stream-scheduler/Calender1.png)
+  ![Creator-Editor](/stream-scheduler/Calender2.png)
+  :::
